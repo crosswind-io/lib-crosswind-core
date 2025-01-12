@@ -1,0 +1,27 @@
+{
+    "name": "lib-crosswind-core",
+    "keywords": "core",
+    "description": "The core Arduino library for the Crosswind Framework.",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/crosswind-io/lib-crosswind-core.git"
+    },
+    "version": "0.1",
+    "exclude": "tests",
+    "examples": "examples/*/*.ino",
+    "frameworks": [
+        "arduino",
+        "esp8266-rtos-sdk"
+    ],
+    "platforms": [
+        "atmelavr",
+        "espressif8266",
+        "espressif32"
+    ],
+    "build": {
+        "libArchive": false,
+		"flags": [
+			"-Isrc"
+		]
+    }
+}
