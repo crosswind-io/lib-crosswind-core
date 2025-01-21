@@ -49,7 +49,7 @@ enum SerialConfig {
 enum Uart {
   UART0 = 0,
   UART1,
-  UART_MAX,
+  UART_MAX
 };
 
 class HardwareSerial : public Stream
@@ -62,7 +62,7 @@ class HardwareSerial : public Stream
     void begin(unsigned long baud, unsigned long config);
     void begin(unsigned long baud, SerialConfig config);
 
-    virtual size_t write(uint8_t);
+    virtual size_t write(uint8_t ch);
     virtual size_t write(const uint8_t* buffer, size_t size);
 
     size_t read(uint8_t* buffer, size_t size);
@@ -101,7 +101,6 @@ class HardwareSerial : public Stream
     uint8_t uartRead();
     void uartFlush();
     void uartFlushTxOnly(bool txOnly);
-
 };
 
 #if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL)

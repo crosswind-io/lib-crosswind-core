@@ -33,8 +33,8 @@ void HardwareSerial::begin(unsigned long baud, SerialConfig config) {
   ESP_ERROR_CHECK(uart_driver_install(static_cast<uart_port_t>(uart_port), UART_BUFFER_SIZE, UART_BUFFER_SIZE, 0, nullptr, 0));
 }
 
-size_t HardwareSerial::write(uint8_t c) {
-  return uartWrite(c);
+size_t HardwareSerial::write(uint8_t ch) {
+  return uartWrite(ch);
 }
 
 size_t HardwareSerial::write(const uint8_t* buffer, size_t size) {

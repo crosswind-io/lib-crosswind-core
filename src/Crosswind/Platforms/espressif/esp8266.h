@@ -10,7 +10,7 @@
   // #define CORE_EXCEPTIONS               1
 
   // Device features
-  // #define DEVICE_I2C_PORT               1
+  #define DEVICE_I2C_PORT               1
   // #define DEVICE_PWM_FAN                1
   // #define DEVICE_SPI_PORT               1
 
