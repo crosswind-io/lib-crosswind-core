@@ -5,6 +5,8 @@
 #include "nvs_flash.h"
 #include "nvs.h"
 
+const std::string NVMemory::SERVICE_NAME = "NVMemory";
+
 NVMemory::~NVMemory() {
   nvs_flash_deinit();
 }

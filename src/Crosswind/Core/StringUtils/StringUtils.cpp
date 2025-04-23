@@ -1,5 +1,7 @@
 #include "StringUtils.h"
 
+#include <algorithm>
+
 namespace StringUtils {
 
   std::string joinToString(const std::vector<std::string>& vec, const char *const delim) {
@@ -13,6 +15,12 @@ namespace StringUtils {
     }
 
     return result;
+  }
+
+  bool containsOnly(const std::string& str, const std::vector<char>& allowed) {
+    return std::all_of(str.begin(), str.end(), [&](char ch){
+        return std::find(allowed.begin(), allowed.end(), ch) != allowed.end();
+    });
   }
 
 }

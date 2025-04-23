@@ -2,6 +2,8 @@
 
 #if defined(SERVICE_NV_MEMORY)
 
+#include <Crosswind/Platforms/Platform.h>
+
 #include "NVMEraseException.h"
 #include "NVMReadException.h"
 #include "NVMWriteException.h"
@@ -45,6 +47,10 @@ void NVMNamespace::disableWrite() {
   enableWrite(false);
 }
 
+std::string NVMNamespace::getLastError() {
+  return last_error;
+}
+
 int8_t NVMNamespace::get(const char* key, int8_t& value) {
   auto result = nvs_get_i8(nvm_handle, key, &value);
   if (result != ESP_OK) {
@@ -53,11 +59,13 @@ int8_t NVMNamespace::get(const char* key, int8_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, int8_t value) {
+bool NVMNamespace::set(const char* key, int8_t value) {
   auto result = nvs_set_i8(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 uint8_t NVMNamespace::get(const char* key, uint8_t& value) {
@@ -68,11 +76,13 @@ uint8_t NVMNamespace::get(const char* key, uint8_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, uint8_t value) {
+bool NVMNamespace::set(const char* key, uint8_t value) {
   auto result = nvs_set_u8(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 int16_t NVMNamespace::get(const char* key, int16_t& value) {
@@ -83,11 +93,13 @@ int16_t NVMNamespace::get(const char* key, int16_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, int16_t value) {
+bool NVMNamespace::set(const char* key, int16_t value) {
   auto result = nvs_set_i16(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 uint16_t NVMNamespace::get(const char* key, uint16_t& value) {
@@ -98,11 +110,13 @@ uint16_t NVMNamespace::get(const char* key, uint16_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, uint16_t value) {
+bool NVMNamespace::set(const char* key, uint16_t value) {
   auto result = nvs_set_u16(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 int32_t NVMNamespace::get(const char* key, int32_t& value) {
@@ -113,11 +127,13 @@ int32_t NVMNamespace::get(const char* key, int32_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, int32_t value) {
+bool NVMNamespace::set(const char* key, int32_t value) {
   auto result = nvs_set_i32(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 uint32_t NVMNamespace::get(const char* key, uint32_t& value) {
@@ -128,11 +144,13 @@ uint32_t NVMNamespace::get(const char* key, uint32_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, uint32_t value) {
+bool NVMNamespace::set(const char* key, uint32_t value) {
   auto result = nvs_set_u32(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 int64_t NVMNamespace::get(const char* key, int64_t& value) {
@@ -143,11 +161,13 @@ int64_t NVMNamespace::get(const char* key, int64_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, int64_t value) {
+bool NVMNamespace::set(const char* key, int64_t value) {
   auto result = nvs_set_i64(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 uint64_t NVMNamespace::get(const char* key, uint64_t& value) {
@@ -158,11 +178,13 @@ uint64_t NVMNamespace::get(const char* key, uint64_t& value) {
   return value;
 }
 
-void NVMNamespace::set(const char* key, uint64_t value) {
+bool NVMNamespace::set(const char* key, uint64_t value) {
   auto result = nvs_set_u64(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 std::string NVMNamespace::get(const char* key) {
@@ -177,14 +199,17 @@ std::string NVMNamespace::get(const char* key) {
     return value;
   } else {
     handleGetFailure(result);
+    return std::string();
   }
 }
 
-void NVMNamespace::set(const char* key, const char* value) {
+bool NVMNamespace::set(const char* key, const char* value) {
   auto result = nvs_set_str(nvm_handle, key, value);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 size_t NVMNamespace::getBlobSize(const char* key) {
@@ -206,48 +231,65 @@ void* NVMNamespace::get(const char* key, void* value, size_t length) {
     }
     return value;
   } else {
-    throw NVMReadException("NVM value larger than destination");
+    last_error = "NVM value larger than destination";
+    #if defined(CORE_EXCEPTIONS)
+      throw NVMReadException(last_error.c_str());
+    #endif
 
-    return value;
+    return nullptr;
   }
 }
 
-void NVMNamespace::set(const char* key, const void* value, size_t length) {
+bool NVMNamespace::set(const char* key, const void* value, size_t length) {
   auto result = nvs_set_blob(nvm_handle, key, value, length);
   if (result != ESP_OK) {
     handleSetFailure(result);
+    return false;
   }
+  return true;
 }
 
 void NVMNamespace::handleEraseFailure(esp_err_t err) {
   switch(err) {
-    case ESP_ERR_NVS_INVALID_HANDLE: throw NVMEraseException("NVM namespace handle not open"); break;
-    case ESP_ERR_NVS_READ_ONLY: throw NVMEraseException("NVM namespace is read-only"); break;
-    default: throw NVMWriteException("Unknown NVM erase error"); break;
+    case ESP_ERR_NVS_INVALID_HANDLE: last_error = "NVM namespace handle not open"; break;
+    case ESP_ERR_NVS_READ_ONLY: last_error = "NVM namespace is read-only"; break;
+    default: last_error = "Unknown NVM erase error"; break;
   }
+
+  #if defined(CORE_EXCEPTIONS)
+    throw NVMEraseException(last_error.c_str());
+  #endif
 }
 
 void NVMNamespace::handleGetFailure(esp_err_t err) {
   switch(err) {
-    case ESP_ERR_NVS_NOT_FOUND: throw NVMReadException("NVM key doesn't exist in namespace"); break;
-    case ESP_ERR_NVS_INVALID_HANDLE: throw NVMReadException("NVM namespace handle not open"); break;
-    case ESP_ERR_NVS_INVALID_NAME: throw NVMReadException("NVM key doesn't satisfy constraints"); break;
-    case ESP_ERR_NVS_INVALID_LENGTH: throw NVMReadException("NVM value larger than destination"); break;
-    default: throw NVMReadException("Unknown NVM read error"); break;
+    case ESP_ERR_NVS_NOT_FOUND: last_error = "NVM key doesn't exist in namespace"; break;
+    case ESP_ERR_NVS_INVALID_HANDLE: last_error = "NVM namespace handle not open"; break;
+    case ESP_ERR_NVS_INVALID_NAME: last_error = "NVM key doesn't satisfy constraints"; break;
+    case ESP_ERR_NVS_INVALID_LENGTH: last_error = "NVM value larger than destination"; break;
+    default: last_error = "Unknown NVM read error"; break;
   }
+
+  #if defined(CORE_EXCEPTIONS)
+    throw NVMReadException(last_error.c_str());
+  #endif
 }
 
 void NVMNamespace::handleSetFailure(esp_err_t err) {
   switch(err) {
-    case ESP_ERR_NVS_NOT_FOUND: throw NVMWriteException("NVM key doesn't exist in namespace"); break;
-    case ESP_ERR_NVS_READ_ONLY: throw NVMWriteException("NVM namespace is read-only"); break;
-    case ESP_ERR_NVS_NOT_ENOUGH_SPACE: throw NVMWriteException("Not enough space"); break;
-    case ESP_ERR_NVS_REMOVE_FAILED: throw NVMWriteException("NVM flash write operation failed"); break;
-    case ESP_ERR_NVS_VALUE_TOO_LONG: throw NVMWriteException("The value is too large for NVM"); break;
-    case ESP_ERR_NVS_INVALID_HANDLE: throw NVMWriteException("NVM namespace handle not open"); break;
-    case ESP_ERR_NVS_INVALID_NAME: throw NVMWriteException("NVM key doesn't satisfy constraints"); break;
-    default: throw NVMWriteException("Unknown NVM write error"); break;
+    case ESP_ERR_NVS_NOT_FOUND: last_error = "NVM key doesn't exist in namespace"; break;
+    case ESP_ERR_NVS_READ_ONLY: last_error = "NVM namespace is read-only"; break;
+    case ESP_ERR_NVS_NOT_ENOUGH_SPACE: last_error = "Not enough space"; break;
+    case ESP_ERR_NVS_REMOVE_FAILED: last_error = "NVM flash write operation failed"; break;
+    case ESP_ERR_NVS_VALUE_TOO_LONG: last_error = "The value is too large for NVM"; break;
+    case ESP_ERR_NVS_INVALID_HANDLE: last_error = "NVM namespace handle not open"; break;
+    case ESP_ERR_NVS_INVALID_NAME: last_error = "NVM key doesn't satisfy constraints"; break;
+    default: last_error = "Unknown NVM write error"; break;
   }
+
+  #if defined(CORE_EXCEPTIONS)
+    throw NVMWriteException(last_error.c_str());
+  #endif
 }
 
 #endif // SERVICE_NV_MEMORY

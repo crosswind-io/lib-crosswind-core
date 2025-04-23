@@ -21,17 +21,19 @@
       void enableWrite(bool writable = true);
       void disableWrite();
 
+      std::string getLastError();
+
       int8_t get(const std::string& key, int8_t& value) {
         return get(key.c_str(), value);
       }
 
       int8_t get(const char* key, int8_t& value);
 
-      void set(const std::string& key, int8_t value) {
-          set(key.c_str(), value);
+      bool set(const std::string& key, int8_t value) {
+          return set(key.c_str(), value);
       }
 
-      void set(const char* key, int8_t value);
+      bool set(const char* key, int8_t value);
 
       uint8_t get(const std::string& key, uint8_t& value) {
         return get(key.c_str(), value);
@@ -39,11 +41,11 @@
 
       uint8_t get(const char* key, uint8_t& value);
 
-      void set(const std::string& key, uint8_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, uint8_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, uint8_t value);
+      bool set(const char* key, uint8_t value);
 
       int16_t get(const std::string& key, int16_t& value) {
         return get(key.c_str(), value);
@@ -51,11 +53,11 @@
 
       int16_t get(const char* key, int16_t& value);
 
-      void set(const std::string& key, int16_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, int16_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, int16_t value);
+      bool set(const char* key, int16_t value);
 
       uint16_t get(const std::string& key, uint16_t& value) {
         return get(key.c_str(), value);
@@ -63,11 +65,11 @@
 
       uint16_t get(const char* key, uint16_t& value);
 
-      void set(const std::string& key, uint16_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, uint16_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, uint16_t value);
+      bool set(const char* key, uint16_t value);
 
       int32_t get(const std::string& key, int32_t& value) {
         return get(key.c_str(), value);
@@ -75,11 +77,11 @@
 
       int32_t get(const char* key, int32_t& value);
 
-      void set(const std::string& key, int32_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, int32_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, int32_t value);
+      bool set(const char* key, int32_t value);
 
       uint32_t get(const std::string& key, uint32_t& value) {
         return get(key.c_str(), value);
@@ -87,11 +89,11 @@
 
       uint32_t get(const char* key, uint32_t& value);
 
-      void set(const std::string& key, uint32_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, uint32_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, uint32_t value);
+      bool set(const char* key, uint32_t value);
 
       int64_t get(const std::string& key, int64_t& value) {
         return get(key.c_str(), value);
@@ -99,11 +101,11 @@
 
       int64_t get(const char* key, int64_t& value);
 
-      void set(const std::string& key, int64_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, int64_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, int64_t value);
+      bool set(const char* key, int64_t value);
 
       uint64_t get(const std::string& key, uint64_t& value) {
         return get(key.c_str(), value);
@@ -111,23 +113,23 @@
 
       uint64_t get(const char* key, uint64_t& value);
 
-      void set(const std::string& key, uint64_t value) {
-        set(key.c_str(), value);
+      bool set(const std::string& key, uint64_t value) {
+        return set(key.c_str(), value);
       }
 
-      void set(const char* key, uint64_t value);
+      bool set(const char* key, uint64_t value);
 
       std::string get(const std::string& key) {
-        return get(key);
+        return get(key.c_str());
       }
 
       std::string get(const char* key);
 
-      void set(const std::string& key, const std::string& value) {
-        set(key.c_str(), value.c_str());
+      bool set(const std::string& key, const std::string& value) {
+        return set(key.c_str(), value.c_str());
       }
 
-      void set(const char* key, const char* value);
+      bool set(const char* key, const char* value);
 
       size_t getBlobSize(const std::string& key) {
         return getBlobSize(key.c_str());
@@ -141,11 +143,11 @@
 
       void* get(const char* key, void* value, size_t length);
 
-      void set(const std::string& key, const void* value, size_t length) {
-        set(key, value, length);
+      bool set(const std::string& key, const void* value, size_t length) {
+        return set(key, value, length);
       }
 
-      void set(const char* key, const void* value, size_t length);
+      bool set(const char* key, const void* value, size_t length);
 
       // Read an object from non-volatile memory.
       template <typename T>
@@ -182,6 +184,8 @@
       nvs_handle nvm_handle = 0;
       bool is_writable = false;
       std::string nvm_name;
+
+      std::string last_error;
   };
 
 #endif // SERVICE_NV_MEMORY

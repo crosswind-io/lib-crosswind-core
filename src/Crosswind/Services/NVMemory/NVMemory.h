@@ -11,7 +11,7 @@
   class NVMemory : public Service {
 
     public:
-      static constexpr const char* SERVICE_NAME = "NVMemory";
+      static const std::string SERVICE_NAME;
 
     public:
       NVMemory() = default;

@@ -2,8 +2,6 @@
 
 #if defined(SERVICE_NV_MEMORY)
 
-const std::string NVMWriter::SERVICE_NAME = "NVMWriter";
-
 NVMWriter::~NVMWriter() {
   if (nvm != nullptr) {
     delete nvm;
@@ -12,7 +10,7 @@ NVMWriter::~NVMWriter() {
 }
 
 void NVMWriter::init() {
-  
+  // TODO: throw exception
 }
 
 void NVMWriter::init(const char* nvmns, bool writable) {
@@ -29,9 +27,6 @@ void NVMWriter::init(NVMNamespace* nvmns) {
   nvm = nvmns;
 }
 
-void NVMWriter::loop() {
-}
-
 void NVMWriter::enableWrite() {
   if (!nvm->isWritable()) {
     nvm->enableWrite();
@@ -44,10 +39,14 @@ void NVMWriter::disableWrite() {
   }
 }
 
-void NVMWriter::write(std::function<void(void)> writer) {
+bool NVMWriter::write(std::function<bool(NVMNamespace*)> writer) {
+  bool result = false;
+
   enableWrite();
-  writer();
+  result = writer(nvm);
   disableWrite();
+
+  return result;
 }
 
 #endif // SERVICE_NV_MEMORY

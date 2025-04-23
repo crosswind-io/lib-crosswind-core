@@ -18,6 +18,6 @@
   // #define SERVICE_EVENT_BROKER          1
   // #define SERVICE_KEYPAD                1
   #define SERVICE_LOGGER                1
-  // #define SERVICE_NV_MEMORY             1
+  #define SERVICE_NV_MEMORY             1
   // #define SERVICE_STATUS_LED            1
 #endif // ESP8266
